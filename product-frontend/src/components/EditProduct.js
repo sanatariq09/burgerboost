@@ -1,143 +1,192 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-function EditProduct({ productId, onClose, onUpdated, onError }) {
+function EditProduct({ productId, onClose, onSuccess, onError }) {
   const [formData, setFormData] = useState({
     name: "",
     price: "",
     quantity: "",
-    image: null,
-    currentImage: null,
+    description: ""
   });
-  const [loading, setLoading] = useState(true);
+  const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await axios.get(`http://localhost:4000/api/products/${productId}`);
-        const { name, price, quantity, image } = res.data;
-        setFormData({ name, price, quantity, image: null, currentImage: image });
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching product data:", err);
-        setLoading(false);
-        if (onError) onError("Failed to fetch product details.");
-        else alert("Error fetching product data");
-      }
-    };
     fetchProduct();
-  }, [productId, onError]);
+  }, [productId]);
+
+  const fetchProduct = async () => {
+    try {
+      setFetchLoading(true);
+      const res = await axios.get(`http://localhost:4000/api/products/${productId}`);
+      const product = res.data;
+      
+      setFormData({
+        name: product.name || "",
+        price: product.price || "",
+        quantity: product.quantity || "",
+        description: product.description || ""
+      });
+    } catch (err) {
+      console.error("❌ Fetch product error:", err);
+      if (onError) onError("Error loading product");
+    } finally {
+      setFetchLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "image") {
-      setFormData({ ...formData, image: files[0] });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const data = new FormData();
-    data.append("name", formData.name);
-    data.append("price", formData.price);
-    data.append("quantity", formData.quantity);
-    if (formData.image) data.append("image", formData.image);
+    
+    if (!formData.name || !formData.price || !formData.quantity) {
+      alert("Please fill in all required fields");
+      return;
+    }
 
     try {
-      await axios.put(`http://localhost:4000/api/products/${productId}`, data, {
-        headers: { "Content-Type": "multipart/form-data" },
+      setLoading(true);
+
+      const submitData = new FormData();
+      submitData.append("name", formData.name);
+      submitData.append("price", parseFloat(formData.price));
+      submitData.append("quantity", parseInt(formData.quantity));
+      submitData.append("description", formData.description);
+      
+      if (image) {
+        submitData.append("image", image);
+      }
+
+      await axios.put(`http://localhost:4000/api/products/${productId}`, submitData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      alert("Product updated successfully!");
-      if (onUpdated) onUpdated(); // refresh list
-      if (onClose) onClose(); // close modal
+      console.log("✅ Product updated successfully");
+      
+      if (onSuccess) {
+        onSuccess();
+      }
+      
     } catch (err) {
-      console.error("Error updating product:", err.response?.data || err.message);
-      if (onError) onError("Failed to update product.");
-      else alert("Error updating product");
+      console.error("❌ Update product error:", err);
+      alert("Error updating product");
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) {
-    return <p className="text-center">Loading Categories details...</p>;
+  if (fetchLoading) {
+    return (
+      <div className="text-center py-4">
+        <div className="spinner-border text-warning" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p className="mt-2">Loading product...</p>
+      </div>
+    );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="edit-form">
-      <div className="mb-3">
-        <label className="form-label fw-bold">Name:</label>
-        <input
-          type="text"
-          name="name"
-          className="form-control"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-      </div>
-
-      <div className="mb-3">
-        <label className="form-label fw-bold">Price:</label>
-        <input
-          type="number"
-          name="price"
-          className="form-control"
-          value={formData.price}
-          onChange={handleChange}
-          required
-        />
-      </div>
-
-      <div className="mb-3">
-        <label className="form-label fw-bold">Quantity:</label>
-        <input
-          type="number"
-          name="quantity"
-          className="form-control"
-          value={formData.quantity}
-          onChange={handleChange}
-          required
-        />
-      </div>
-
-      <div className="mb-3">
-        <label className="form-label fw-bold">Current Image:</label>
-        {formData.currentImage ? (
-          <img
-            src={`http://localhost:4000${formData.currentImage}`}
-            alt="current"
-            style={{
-              width: "100%",
-              maxHeight: "200px",
-              objectFit: "cover",
-              marginBottom: "10px",
-              borderRadius: "8px",
-            }}
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label className="form-label">Product Name *</label>
+          <input
+            type="text"
+            className="form-control"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
           />
-        ) : (
-          <p className="text-muted">No image available</p>
-        )}
-        <input
-          type="file"
-          name="image"
-          className="form-control"
-          accept="image/*"
-          onChange={handleChange}
-        />
-      </div>
+        </div>
 
-      <div className="d-flex justify-content-between">
-        <button type="submit" className="btn btn-success">
-          Update
-        </button>
-        <button type="button" className="btn btn-secondary" onClick={onClose}>
-          Cancel
-        </button>
-      </div>
-    </form>
+        <div className="row">
+          <div className="col-md-6">
+            <div className="mb-3">
+              <label className="form-label">Price ($) *</label>
+              <input
+                type="number"
+                step="0.01"
+                className="form-control"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="mb-3">
+              <label className="form-label">Quantity *</label>
+              <input
+                type="number"
+                className="form-control"
+                name="quantity"
+                value={formData.quantity}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Description</label>
+          <textarea
+            className="form-control"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Product Image</label>
+          <input
+            type="file"
+            className="form-control"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+          <div className="form-text">
+            Choose a new image to update (optional)
+          </div>
+        </div>
+
+        <div className="d-flex gap-2 justify-content-end">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="btn btn-warning"
+            disabled={loading}
+          >
+            {loading ? "Updating..." : "Update Product"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 

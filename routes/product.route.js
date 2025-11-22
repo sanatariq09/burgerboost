@@ -4,13 +4,13 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
-  getProduct,
+  getProduct
 } from "../controllers/product.controller.js";
 import { upload } from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
-// All products
+// All products with pagination and search
 router.get("/", getProducts);
 
 // Single product
@@ -24,5 +24,6 @@ router.put("/:id", upload.single("image"), updateProduct);
 
 // Delete product
 router.delete("/:id", deleteProduct);
+
 
 export default router;

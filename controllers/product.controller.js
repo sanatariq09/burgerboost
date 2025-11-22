@@ -1,97 +1,168 @@
 import Product from "../models/product.model.js";
 
-// Get all products WITH PAGINATION AND CATEGORIES
-export async function getProducts(req, res) {
+// Get all products with pagination and search
+export const getProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 6;
-    const search = req.query.search || '';
-    const category = req.query.category || '';
+    const search = req.query.search || "";
 
-    console.log(`Fetching products - Page: ${page}, Limit: ${limit}, Search: "${search}", Category: "${category}"`);
+    console.log("📥 Backend - Fetching products:", { page, limit, search });
 
-    // Build search query
-    let query = {};
-    if (search && search.trim() !== '') {
-      // EXACT MATCH ONLY when searching
-      query = { name: { $regex: `^${search.trim()}$`, $options: 'i' } };
-    } else if (category && category.trim() !== '') {
-      // Filter by category
-      query = { category: { $regex: category, $options: 'i' } };
+    // Validate inputs
+    if (page < 1 || limit < 1) {
+      return res.status(400).json({ 
+        message: 'Invalid page or limit value',
+        products: [],
+        pagination: {
+          currentPage: 1,
+          totalPages: 0,
+          totalProducts: 0,
+          hasNext: false,
+          hasPrev: false
+        }
+      });
     }
 
-    const options = {
-      page: page,
-      limit: limit,
-      sort: { createdAt: -1 }
-    };
+    const skip = (page - 1) * limit;
+    
+    // Build search query
+    let query = {};
+    if (search && search.trim() !== "") {
+      query.name = { $regex: search.trim(), $options: 'i' };
+    }
 
-    const result = await Product.paginate(query, options);
+    console.log("🔍 MongoDB Query:", query);
 
-    // Get all categories for filter
-    const categories = await Product.distinct('category');
+    const products = await Product.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .lean();
 
-    res.status(200).json({
-      products: result.docs,
+    const totalProducts = await Product.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    console.log(`✅ Found ${products.length} products, Total: ${totalProducts}`);
+
+    res.json({
+      products: products || [],
       pagination: {
-        currentPage: result.page,
-        totalPages: result.totalPages,
-        totalProducts: result.totalDocs,
-        hasNextPage: result.hasNextPage,
-        hasPrevPage: result.hasPrevPage
-      },
-      categories: categories
+        currentPage: page,
+        totalPages,
+        totalProducts,
+        hasNext: page < totalPages,
+        hasPrev: page > 1
+      }
     });
-
   } catch (error) {
-    console.error("Error fetching products:", error.message);
-    res.status(500).json({ message: error.message });
+    console.error('❌ Backend Error:', error);
+    res.status(500).json({ 
+      message: 'Server error', 
+      error: error.message,
+      products: [],
+      pagination: {
+        currentPage: 1,
+        totalPages: 0,
+        totalProducts: 0,
+        hasNext: false,
+        hasPrev: false
+      }
+    });
   }
-}
+};
 
-// Get products by category
-export async function getProductsByCategory(req, res) {
+// Get single product
+export const getProduct = async (req, res) => {
   try {
-    const { category } = req.params;
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 6;
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json(product);
+  } catch (error) {
+    console.error('❌ Get product error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
 
-    const options = {
-      page: page,
-      limit: limit,
-      sort: { createdAt: -1 }
+// Create product
+export const createProduct = async (req, res) => {
+  try {
+    const { name, price, quantity, description } = req.body;
+    
+    // Validation
+    if (!name || !price || !quantity) {
+      return res.status(400).json({ message: 'Name, price and quantity are required' });
+    }
+
+    const productData = {
+      name: name.trim(),
+      price: parseFloat(price),
+      quantity: parseInt(quantity),
+      description: description?.trim() || ""
     };
 
-    const result = await Product.paginate(
-      { category: { $regex: category, $options: 'i' } }, 
-      options
+    if (req.file) {
+      productData.image = `/uploads/${req.file.filename}`;
+    }
+
+    const product = new Product(productData);
+    await product.save();
+
+    console.log("✅ Product created:", product._id);
+    res.status(201).json(product);
+  } catch (error) {
+    console.error('❌ Create product error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Update product
+export const updateProduct = async (req, res) => {
+  try {
+    const { name, price, quantity, description } = req.body;
+    
+    const updateData = {
+      name: name?.trim(),
+      price: parseFloat(price),
+      quantity: parseInt(quantity),
+      description: description?.trim() || ""
+    };
+
+    if (req.file) {
+      updateData.image = `/uploads/${req.file.filename}`;
+    }
+
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
     );
 
-    res.status(200).json({
-      products: result.docs,
-      pagination: {
-        currentPage: result.page,
-        totalPages: result.totalPages,
-        totalProducts: result.totalDocs,
-        hasNextPage: result.hasNextPage,
-        hasPrevPage: result.hasPrevPage
-      },
-      category: category
-    });
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
 
+    console.log("✅ Product updated:", product._id);
+    res.json(product);
   } catch (error) {
-    console.error("Error fetching products by category:", error.message);
-    res.status(500).json({ message: error.message });
+    console.error('❌ Update product error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
-}
-export async function getProduct(req, res) {
-}
+};
 
-export async function createProduct(req, res) {
-}
-
-export async function updateProduct(req, res) {
-}
-
-export async function deleteProduct(req, res) {
-}
+// Delete product
+export const deleteProduct = async (req, res) => {
+  try {
+    const product = await Product.findByIdAndDelete(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    console.log("✅ Product deleted:", req.params.id);
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    console.error('❌ Delete product error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};

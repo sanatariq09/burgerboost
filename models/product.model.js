@@ -1,35 +1,41 @@
 import mongoose from "mongoose";
-import mongoosePaginate from 'mongoose-paginate-v2';
 
-const ProductSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, "Please enter product name"],
-    },
-    quantity: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    price: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    image: {
-      type: String,
-      required: false,
-      default: null,
-    },
+const productSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, "Product name is required"],
+    trim: true,
+    maxlength: [100, "Product name cannot exceed 100 characters"]
   },
-  {
-    timestamps: true,
+  price: {
+    type: Number,
+    required: [true, "Product price is required"],
+    min: [0, "Price cannot be negative"],
+    max: [10000, "Price cannot exceed $10,000"]
+  },
+  quantity: {
+    type: Number,
+    required: [true, "Product quantity is required"],
+    min: [0, "Quantity cannot be negative"],
+    default: 0
+  },
+  description: {
+    type: String,
+    trim: true,
+    maxlength: [500, "Description cannot exceed 500 characters"],
+    default: ""
+  },
+  image: {
+    type: String,
+    default: ""
   }
-);
+}, {
+  timestamps: true
+});
 
-// Add pagination plugin to schema
-ProductSchema.plugin(mongoosePaginate);
+// Create index for better search performance
+productSchema.index({ name: 'text', description: 'text' });
 
-const Product = mongoose.model("Product", ProductSchema);
+const Product = mongoose.model("Product", productSchema);
+
 export default Product;

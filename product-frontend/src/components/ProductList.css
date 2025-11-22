@@ -1,275 +1,520 @@
-/* Card hover effect */
+/* Product Card Styles - White Text */
+/* Card Body - White Background with Black Text */
+.product-card .card-body {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+  color: #000000 !important;
+  border-radius: 0 0 15px 15px !important;
+  padding: 1.5rem !important;
+  border: 2px solid #e9ecef !important;
+  border-top: none !important;
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Card Title - Black */
+.product-card .card-title {
+  color: #000000 !important;
+  font-weight: 700 !important;
+  font-size: 1.3rem !important;
+  margin-bottom: 1rem !important;
+  text-align: center !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+/* All Card Text - Black */
+.product-card .card-text {
+  color: #000000 !important;
+  margin-bottom: 0.8rem !important;
+  font-size: 0.95rem !important;
+  line-height: 1.5 !important;
+}
+
+.product-card .card-text strong {
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+/* Price - Dark Red for emphasis */
+.product-card .card-text:nth-child(2) {
+  color: #b91c1c !important;
+  font-weight: 700 !important;
+  font-size: 1.2rem !important;
+}
+
+/* Quantity - Dark Blue for emphasis */
+.product-card .card-text:nth-child(3) {
+  color: #1e40af !important;
+  font-weight: 600 !important;
+}
+
+/* Description - Dark Gray but still readable */
+.product-card .text-muted {
+  color: #4b5563 !important;
+  font-style: italic !important;
+  background: rgba(249, 250, 251, 0.8) !important;
+  padding: 0.5rem !important;
+  border-radius: 8px !important;
+  border-left: 3px solid #d1d5db !important;
+}
+
+/* Success/Danger Text - Dark versions */
+.product-card .text-success {
+  color: #15803d !important;
+}
+
+.product-card .text-danger {
+  color: #b91c1c !important;
+}
+
+/* Cute Card Container - White Theme */
 .product-card {
-  transition: transform 0.3s, box-shadow 0.3s;
-  border-radius: 10px;
-  overflow: hidden;
+  background: linear-gradient(145deg, #ffffff, #f8fafc) !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  overflow: hidden !important;
 }
 
 .product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  transform: translateY(-8px) scale(1.02) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15) !important;
+  border-color: #cbd5e0 !important;
 }
 
-/* Image styling */
+/* Image Container */
+.product-image-container {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 18px 18px 0 0 !important;
+}
+
 .product-img {
-  height: 200px;
-  object-fit: cover;
-  transition: transform 0.3s;
+  height: 220px !important;
+  object-fit: cover !important;
+  transition: all 0.4s ease !important;
+  border-radius: 18px 18px 0 0 !important;
 }
 
 .product-card:hover .product-img {
-  transform: scale(1.05);
+  transform: scale(1.08) !important;
 }
 
-/* Card body spacing */
-.card-body {
-  text-align: center;
+/* Sold Out Badge */
+.sold-out-badge {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  background: linear-gradient(45deg, #dc2626, #b91c1c) !important;
+  color: white !important;
+  padding: 6px 14px !important;
+  border-radius: 25px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3) !important;
+  border: 2px solid white !important;
 }
 
-.card-title {
-  font-weight: 600;
-  color: #333;
+/* Action Buttons */
+.product-card .btn-warning {
+  background: linear-gradient(45deg, #f59e0b, #d97706) !important;
+  border: none !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  padding: 0.5rem 1rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3) !important;
 }
 
-.card-text {
-  color: #555;
+.product-card .btn-warning:hover {
+  background: linear-gradient(45deg, #d97706, #b45309) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4) !important;
+  color: #000000 !important;
 }
 
-.btn {
-  font-size: 0.85rem;
-  padding: 0.35rem 0.6rem;
+.product-card .btn-danger {
+  background: linear-gradient(45deg, #dc2626, #b91c1c) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  padding: 0.5rem 1rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3) !important;
 }
-/* slider */
+
+.product-card .btn-danger:hover {
+  background: linear-gradient(45deg, #b91c1c, #991b1b) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.4) !important;
+  color: white !important;
+}
+
+/* Order Now Button */
+.order-now-btn {
+  background: linear-gradient(45deg, #dc2626, #b91c1c) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  padding: 12px 20px !important;
+  border-radius: 15px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.order-now-btn:hover:not(:disabled) {
+  background: linear-gradient(45deg, #ea580c, #c2410c) !important;
+  transform: translateY(-3px) scale(1.05) !important;
+  box-shadow: 0 8px 25px rgba(234, 88, 12, 0.4) !important;
+  color: white !important;
+}
+
+.order-now-btn:disabled {
+  background: linear-gradient(45deg, #6b7280, #4b5563) !important;
+  transform: none !important;
+  box-shadow: none !important;
+  color: #d1d5db !important;
+}
+
+/* Button Container */
+.product-card .mt-auto {
+  margin-top: 1.5rem !important;
+  padding-top: 1rem !important;
+  border-top: 2px dashed #e5e7eb !important;
+}
+
+/* Ensure ALL text in card body is black and readable */
+.product-card .card-body *:not(.btn):not(.btn *):not(.badge):not(.badge *) {
+  color: #000000 !important;
+}
+
+/* Specific styling for different text elements */
+.product-card .card-body span {
+  color: #000000 !important;
+}
+
+.product-card .card-body small {
+  color: #374151 !important;
+}
+
+.product-card .card-body .fw-bold {
+  color: #000000 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .product-card .card-body {
+    padding: 1rem !important;
+  }
+  
+  .product-card .card-title {
+    font-size: 1.1rem !important;
+  }
+  
+  .product-img {
+    height: 180px !important;
+  }
+}
+
+/* Decorative top border */
+.product-card::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 4px !important;
+  background: linear-gradient(90deg, #dc2626, #ea580c, #dc2626) !important;
+  border-radius: 20px 20px 0 0 !important;
+  z-index: 1 !important;
+}
+/* Slider Styles */
+.slider-container {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
 .slider-img {
   width: 100%;
-  height: 350px;
+  height: 400px;
   object-fit: cover;
-  border-radius: 10px;
 }
 
-/* product card hover */
-.product-card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  border-radius: 10px;
-  overflow: hidden;
-}
-.product-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 26px rgba(0,0,0,0.15);
+/* Empty State */
+.empty-state {
+  padding: 60px 20px;
 }
 
-/* product image */
-.product-img {
-  height: 200px;
-  object-fit: cover;
-  transition: transform 0.3s;
-}
-.product-card:hover .product-img {
-  transform: scale(1.05);
+/* Pagination with Gaps */
+.pagination {
+  gap: 8px !important;
+  margin: 2rem 0 !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
 }
 
-/* modal overlay & content */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  padding: 20px;
+.pagination .page-item {
+  margin: 0 4px !important;
 }
-.modal-dialog-centered {
-  max-width: 720px;
-  width: 100%;
+
+.pagination .page-item.active .page-link {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: white !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3) !important;
 }
-.modal-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+.pagination .page-link {
+  color: #dc3545 !important;
+  border-radius: 10px !important;
+  border: 2px solid #e9ecef !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  min-width: 45px !important;
+  text-align: center !important;
+  background: white !important;
 }
-.modal-header .modal-title {
-  margin: 0;
+
+.pagination .page-link:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
+  border-color: #dc3545 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3) !important;
 }
-.btn-close {
-  background: transparent;
-  border: 0;
-  font-size: 1.2rem;
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d !important;
+  background: #f8f9fa !important;
+  border-color: #dee2e6 !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
+
+/* Specific spacing for pagination items */
+.pagination .page-item:first-child .page-link {
+  margin-right: 12px !important;
+}
+
+.pagination .page-item:last-child .page-link {
+  margin-left: 12px !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .pagination {
+    gap: 6px !important;
+  }
+  
+  .pagination .page-link {
+    padding: 0.4rem 0.8rem !important;
+    min-width: 40px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .pagination .page-item {
+    margin: 0 2px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .pagination {
+    gap: 4px !important;
+  }
+  
+  .pagination .page-link {
+    padding: 0.3rem 0.6rem !important;
+    min-width: 35px !important;
+    font-size: 0.85rem !important;
+  }
+}/* Modal Styles - Keep Original Colors */
+.modal-header.bg-warning {
+  background: linear-gradient(45deg, #ffc107, #ffca28) !important;
+  color: #000000 !important;
+}
+
+.modal-header.bg-warning .modal-title {
+  color: #000000 !important;
+}
+
+.modal-header.bg-primary {
+  background: linear-gradient(45deg, #dc3545, #c82333) !important;
+  color: #ffffff !important;
+}
+
+.modal-header.bg-primary .modal-title {
+  color: #ffffff !important;
+}
+
+.modal-body {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+.modal-body .form-control {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #ced4da;
+}
+
+.modal-body .form-label {
+  color: #000000 !important;
+}
+
+.modal-body .card {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #dee2e6;
+}
+
+.modal-body .card-header {
+  background: #f8f9fa !important;
+  color: #000000 !important;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-body .card-body {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Edit Form - Keep Black Text */
+.edit-form {
+  background: #ffffff !important;
+}
+
+.edit-form .form-control {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #ced4da;
+}
+
+.edit-form .form-label {
+  color: #000000 !important;
+  font-weight: 600;
+}
+
+.edit-form .form-text {
+  color: #6c757d !important;
+}
+
+/* Smooth Scrolling - Remove problematic styles */
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Remove all problematic modal backdrop filters */
+.modal-backdrop {
+  background-color: rgba(0,0,0,0.5) !important;
+}
+
+.modal-backdrop,
+.modal-backdrop *,
+.modal,
+.modal * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .slider-img {
+    height: 250px;
+  }
+  
+  .product-img {
+    height: 200px;
+  }
+  
+  .modal-dialog {
+    margin: 20px;
+  }
+  
+  .product-card .card-body {
+    padding: 1rem;
+  }
+}
+
 /* Search Bar Styles */
 .search-container {
   max-width: 600px;
   margin: 0 auto 2rem auto;
 }
 
-/* Product Card Styles */
-.product-card {
-  transition: transform 0.2s ease-in-out;
+.search-container .form-control {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #ced4da;
 }
 
-.product-card:hover {
-  transform: translateY(-5px);
+.search-container .btn {
+  background: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #ffffff !important;
 }
 
-.product-img {
-  height: 200px;
-  object-fit: cover;
+/* Ensure all text in product cards is white */
+.product-card *:not(.btn):not(.btn *):not(.badge):not(.badge *) {
+  color: white !important;
 }
 
-/* Pagination Styles */
-.pagination {
-  margin-bottom: 0;
+/* Specific override for button text to keep original colors */
+.product-card .btn-warning,
+.product-card .btn-warning * {
+  color: #000000 !important;
 }
 
-.page-item.active .page-link {
-  background-color: #f81808;
-  border-color: #fa6a09;
+.product-card .btn-danger,
+.product-card .btn-danger * {
+  color: #ffffff !important;
 }
 
-.page-link {
-  color: #f19011;
+.product-card .btn-secondary,
+.product-card .btn-secondary * {
+  color: #ffffff !important;
 }
 
-.page-link:hover {
-  color: #f87f0f;
-}
-/* Modal Overlay */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1050;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-}
-
-.modal-overlay.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal-dialog {
-  max-width: 800px;
-  width: 90%;
-  margin: 1rem;
-}
-
-.modal-content {
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
-}
-
-/* Order Now Button */
-.order-now-btn {
-  background: linear-gradient(45deg, #dc3545, #c82333);
-  border: none;
-  padding: 12px 20px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-}
-
-.order-now-btn:hover {
-  background: linear-gradient(45deg, #c82333, #a71e2a);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
-}
-
-/* Product Card */
-.product-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: none;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-}
-
-/* Checkout Form Styles */
-.form-control:focus {
-  border-color: #f03515;
-  box-shadow: 0 0 0 0.2rem rgba(240, 39, 12, 0.25);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .modal-dialog {
-    margin: 0.5rem;
-    width: 95%;
-  }
-  
-  .order-now-btn {
-    padding: 10px 16px;
-    font-size: 1rem;
-  }
-}
-/* Red Theme for Checkout Header */
-.bg-primary {
-  background: linear-gradient(45deg, #dc3545, #c82333) !important;
-  border: none;
-}
-
-/* Red buttons */
-.btn-primary {
-  background: linear-gradient(45deg, #dc3545, #c82333);
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  background: linear-gradient(45deg, #c82333, #a71e2a);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-}
-
-/* Success button bhi red theme ke saath */
+/*  */
+/* Red Button with Orange Hover */
 .btn-success {
-  background: linear-gradient(45deg, #dc3545, #c82333);
-  border: none;
-  transition: all 0.3s ease;
+    background: linear-gradient(45deg, #dc3545, #c82333) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: bold !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3) !important;
 }
 
 .btn-success:hover {
-  background: linear-gradient(45deg, #c82333, #a71e2a);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    background: linear-gradient(45deg, #fd7e14, #e8590c) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(253, 126, 20, 0.4) !important;
+    color: white !important;
 }
 
-/* Info badge bhi red */
-.badge.bg-info {
+.btn-success:active {
+    background: linear-gradient(45deg, #e8590c, #d9480f) !important;
+    transform: translateY(0) !important;
+}
+
+.btn-success:focus {
+    box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25) !important;
+    border: none !important;
+}
+.modal-header.bg-warning {
   background: linear-gradient(45deg, #dc3545, #c82333) !important;
-  border: none;
-}
-
-/* Success badge bhi red */
-.badge.bg-success {
-  background: linear-gradient(45deg, #dc3545, #c82333) !important;
-  border: none;
-}
-
-/* Pagination active state bhi red */
-.page-item.active .page-link {
-  background: linear-gradient(45deg, #dc3545, #c82333) !important;
-  border-color: #dc3545;
-}
-
-.page-link {
-  color: #dc3545;
-}
-
-.page-link:hover {
-  color: #a71e2a;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3) !important;
+  border: none !important;
 }

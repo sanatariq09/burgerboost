@@ -2,47 +2,95 @@ import express from "express";
 import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
-import productRoutes from "./routes/product.route.js";
 import cors from "cors";
+import productRoutes from "./routes/product.route.js";
+import dotenv from "dotenv";
+import { fileURLToPath } from 'url';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 
-//CORS
-app.use(cors());
+// Get directory name in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-//Middleware
+// Enable CORS
+app.use(cors({ 
+  origin: "http://localhost:3000",
+  credentials: true
+}));
+
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-//Create 'uploads' 
-const uploadPath = path.join(process.cwd(), "uploads");
+// Create 'uploads' folder if it doesn't exist
+const uploadPath = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath);
-  console.log("'uploads' folder created automatically.");
+  fs.mkdirSync(uploadPath, { recursive: true });
+  console.log("✅ 'uploads' folder created automatically.");
 }
 
-//Serve uploaded images
+// Serve uploaded images
 app.use("/uploads", express.static(uploadPath));
 
 // Routes
 app.use("/api/products", productRoutes);
 
-//Test route
+// Test route
 app.get("/", (req, res) => {
-  res.send("Hello from Node API Server — updated!");
+  res.json({ 
+    message: "🍔 Burger Boots API Server is running!",
+    timestamp: new Date().toISOString()
+  });
 });
 
-//Connect to MongoDB
+// Health check route
+app.get("/health", (req, res) => {
+  res.json({ 
+    status: "OK", 
+    database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected",
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Fix Mongoose strictQuery warning
+mongoose.set("strictQuery", true);
+
+// Use environment variable for MongoDB URI
+const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/burgerboots";
+
+// Connect to MongoDB
 mongoose
-  .connect(
-    "mongodb+srv://sanatarique17:Karachi%40123@backenddb.8atvt8z.mongodb.net/Node-API?appName=BackendDB",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
-  .then(() => {
-    console.log("MongoDB connected successfully");
-    app.listen(4000, () => console.log("Server running on port 4000"));
+  .connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
   })
-  .catch((err) => console.error("Connection error:", err));
+  .then(() => {
+    console.log("✅ MongoDB connected successfully");
+    const PORT = process.env.PORT || 4000;
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📱 Frontend: http://localhost:3000`);
+      console.log(`🔙 Backend: http://localhost:${PORT}`);
+      console.log(`🏥 Health: http://localhost:${PORT}/health`);
+    });
+  })
+  .catch(err => {
+    console.error("❌ MongoDB connection error:", err);
+    console.log("💡 Please check:");
+    console.log("   1. MongoDB is running");
+    console.log("   2. MONGO_URI is correct in .env file");
+    console.log("   3. Network connection is stable");
+    process.exit(1);
+  });
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.log('❌ Unhandled Rejection:', err);
+  process.exit(1);
+});
