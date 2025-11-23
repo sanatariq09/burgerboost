@@ -77,22 +77,24 @@ function Blog() {
     e.target.onerror = null;
   };
 
-  // Fetch products from database
+  // ✅ ADDED: Fetch products function with pagination
   const fetchProducts = async (page = 1) => {
     try {
       setLoading(true);
       const url = `http://localhost:4000/api/products?page=${page}&limit=8&search=`;
       const res = await axios.get(url);
 
-      console.log("Products fetched for blog:", res.data.products?.length || 0);
+      console.log("✅ Products fetched for blog:", res.data.products?.length || 0);
 
       setProducts(res.data.products || []);
       setTotalPages(res.data.pagination?.totalPages || 1);
       setTotalProducts(res.data.pagination?.totalProducts || 0);
       setCurrentPage(page);
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error("❌ Fetch error:", err);
       setProducts([]);
+      setTotalPages(1);
+      setTotalProducts(0);
     } finally {
       setLoading(false);
     }
@@ -102,6 +104,7 @@ function Blog() {
     fetchProducts(1);
   }, []);
 
+  // ✅ ADDED: Pagination handler
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       fetchProducts(newPage);
@@ -206,6 +209,13 @@ function Blog() {
               <div className="section-header">
                 <h2>🍔 Our Delicious Burgers</h2>
                 <p>Explore our complete burger collection from the database</p>
+                {/* ✅ ADDED: Products count info */}
+                <div className="products-count-info text-center mb-3">
+                  <p className="text-muted">
+                    Showing <strong>{products.length}</strong> of <strong>{totalProducts}</strong> burgers
+                    {totalPages > 1 && ` • Page ${currentPage} of ${totalPages}`}
+                  </p>
+                </div>
               </div>
 
               {loading ? (
@@ -286,11 +296,23 @@ function Blog() {
                     )}
                   </div>
 
-                  {/* Pagination for Products */}
+                  {/* ✅ ADDED: Enhanced Pagination */}
                   {totalPages > 1 && (
                     <div className="products-pagination mt-4">
                       <nav aria-label="Products pagination">
                         <ul className="pagination justify-content-center">
+                          {/* First Page */}
+                          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                            <button
+                              className="page-link"
+                              onClick={() => handlePageChange(1)}
+                              disabled={currentPage === 1}
+                            >
+                              <i className="fas fa-angle-double-left"></i>
+                            </button>
+                          </li>
+
+                          {/* Previous Page */}
                           <li
                             className={`page-item ${
                               currentPage === 1 ? "disabled" : ""
@@ -306,25 +328,44 @@ function Blog() {
                             </button>
                           </li>
 
-                          {Array.from(
-                            { length: totalPages },
-                            (_, i) => i + 1
-                          ).map((page) => (
-                            <li
-                              key={page}
-                              className={`page-item ${
-                                currentPage === page ? "active" : ""
-                              }`}
-                            >
-                              <button
-                                className="page-link"
-                                onClick={() => handlePageChange(page)}
-                              >
-                                {page}
-                              </button>
-                            </li>
-                          ))}
+                          {/* Page Numbers - Show limited pages */}
+                          {(() => {
+                            let startPage = Math.max(1, currentPage - 2);
+                            let endPage = Math.min(totalPages, currentPage + 2);
+                            
+                            // Adjust if at start
+                            if (currentPage <= 3) {
+                              endPage = Math.min(5, totalPages);
+                            }
+                            
+                            // Adjust if at end
+                            if (currentPage >= totalPages - 2) {
+                              startPage = Math.max(1, totalPages - 4);
+                            }
 
+                            const pages = [];
+                            for (let i = startPage; i <= endPage; i++) {
+                              pages.push(i);
+                            }
+
+                            return pages.map((page) => (
+                              <li
+                                key={page}
+                                className={`page-item ${
+                                  currentPage === page ? "active" : ""
+                                }`}
+                              >
+                                <button
+                                  className="page-link"
+                                  onClick={() => handlePageChange(page)}
+                                >
+                                  {page}
+                                </button>
+                              </li>
+                            ));
+                          })()}
+
+                          {/* Next Page */}
                           <li
                             className={`page-item ${
                               currentPage === totalPages ? "disabled" : ""
@@ -339,13 +380,23 @@ function Blog() {
                               <i className="fas fa-chevron-right ms-1"></i>
                             </button>
                           </li>
+
+                          {/* Last Page */}
+                          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                            <button
+                              className="page-link"
+                              onClick={() => handlePageChange(totalPages)}
+                              disabled={currentPage === totalPages}
+                            >
+                              <i className="fas fa-angle-double-right"></i>
+                            </button>
+                          </li>
                         </ul>
                       </nav>
 
                       <div className="text-center mt-2">
                         <small className="text-muted">
-                          Page {currentPage} of {totalPages} • Showing{" "}
-                          {products.length} of {totalProducts} burgers
+                          Page {currentPage} of {totalPages} • Showing {products.length} of {totalProducts} burgers
                         </small>
                       </div>
                     </div>
@@ -422,6 +473,13 @@ function Blog() {
                   >
                     ➕ Add New Burger
                   </Link>
+                  {/* ✅ ADDED: Refresh button */}
+                  <button
+                    className="btn btn-outline-info btn-sm w-100"
+                    onClick={() => fetchProducts(1)}
+                  >
+                    🔄 Refresh Products
+                  </button>
                 </div>
               </div>
 

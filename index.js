@@ -6,6 +6,7 @@ import cors from "cors";
 import productRoutes from "./routes/product.route.js";
 import dotenv from "dotenv";
 import { fileURLToPath } from 'url';
+import blogRoutes from "./routes/blog.route.js";
 
 // Load environment variables
 dotenv.config();
@@ -55,6 +56,10 @@ app.get("/health", (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Routes
+app.use("/api/products", productRoutes);
+app.use("/api/blogs", blogRoutes); 
 
 // Fix Mongoose strictQuery warning
 mongoose.set("strictQuery", true);
