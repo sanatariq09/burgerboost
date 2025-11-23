@@ -31,7 +31,7 @@ app.use(express.urlencoded({ extended: false }));
 const uploadPath = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
-  console.log("✅ 'uploads' folder created automatically.");
+  console.log(" 'uploads' folder created automatically.");
 }
 
 // Serve uploaded images
@@ -61,10 +61,8 @@ app.get("/health", (req, res) => {
 app.use("/api/products", productRoutes);
 app.use("/api/blogs", blogRoutes); 
 
-// Fix Mongoose strictQuery warning
 mongoose.set("strictQuery", true);
 
-// Use environment variable for MongoDB URI
 const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/burgerboots";
 
 // Connect to MongoDB
@@ -76,26 +74,20 @@ mongoose
     socketTimeoutMS: 45000,
   })
   .then(() => {
-    console.log("✅ MongoDB connected successfully");
+    console.log("MongoDB connected successfully");
     const PORT = process.env.PORT || 4000;
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📱 Frontend: http://localhost:3000`);
-      console.log(`🔙 Backend: http://localhost:${PORT}`);
-      console.log(`🏥 Health: http://localhost:${PORT}/health`);
+      console.log(`Server running on port ${PORT}`);
     });
   })
   .catch(err => {
-    console.error("❌ MongoDB connection error:", err);
-    console.log("💡 Please check:");
-    console.log("   1. MongoDB is running");
-    console.log("   2. MONGO_URI is correct in .env file");
-    console.log("   3. Network connection is stable");
-    process.exit(1);
+    console.error("MongoDB connection error:", err);
+    console.log("Please check:");
+    console.log("MongoDB is running");
   });
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
-  console.log('❌ Unhandled Rejection:', err);
+  console.log(' Unhandled Rejection:', err);
   process.exit(1);
 });

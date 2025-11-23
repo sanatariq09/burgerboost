@@ -21,11 +21,15 @@ const blogSchema = new mongoose.Schema({
     type: String,
     trim: true
   }],
-  category: {
-    type: String,
-    required: true,
-    enum: ['cooking', 'quality', 'behind-scenes', 'story', 'recipes']
-  },
+  // models/Blog.js
+category: {
+  type: String,
+  required: true,
+  enum: {
+    values: ['Technology', 'Travel', 'Food', 'Lifestyle', 'Health', 'Cooking'],
+    message: '{VALUE} is not a valid category'
+  }
+},
   image: {
     type: String,
     default: ""

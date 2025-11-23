@@ -1,5 +1,3 @@
-/* Product Card Styles - White Text */
-/* Card Body - White Background with Black Text */
 .product-card .card-body {
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
   color: #000000 !important;
@@ -10,7 +8,7 @@
   box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.05) !important;
 }
 
-/* Card Title - Black */
+/* Card Title  */
 .product-card .card-title {
   color: #000000 !important;
   font-weight: 700 !important;
@@ -20,7 +18,7 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
-/* All Card Text - Black */
+/* All Card Text  */
 .product-card .card-text {
   color: #000000 !important;
   margin-bottom: 0.8rem !important;
@@ -72,7 +70,6 @@
   border-radius: 20px !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  overflow: hidden !important;
 }
 
 .product-card:hover {
@@ -405,15 +402,7 @@
   color: #6c757d !important;
 }
 
-/* Smooth Scrolling - Remove problematic styles */
-html {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-}
 
-body {
-  overflow-x: hidden;
-}
 
 /* Remove all problematic modal backdrop filters */
 .modal-backdrop {

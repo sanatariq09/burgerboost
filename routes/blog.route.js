@@ -4,7 +4,8 @@ import {
   createBlog,
   updateBlog,
   deleteBlog,
-  getBlog
+  getBlog,
+  getCategories
 } from "../controllers/blog.controller.js";
 import { upload } from "../middleware/upload.middleware.js";
 
@@ -25,4 +26,6 @@ router.put("/:id", upload.single("image"), updateBlog);
 // Delete blog
 router.delete("/:id", deleteBlog);
 
+// In your routes file
+router.get('/categories', getCategories);
 export default router;

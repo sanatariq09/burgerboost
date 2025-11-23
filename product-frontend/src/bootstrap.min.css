@@ -468,23 +468,6 @@ h6 {
   }
 }
 
-/* DARK SCROLLBAR */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #1a1a1a;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(#ff6b35, #ff8c00);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(#ff8c00, #ff6b35);
-}
 
 /* SELECTION COLORS */
 ::selection {

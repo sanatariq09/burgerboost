@@ -5,18 +5,17 @@ import "./ProductList.css";
 import Slider from "react-slick";
 import { useNavigate } from "react-router-dom";
 
-// ✅ FIXED: Fallback images for slider and products
 const fallbackImages = [
   "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YnVyZ2VyfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
   "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJ1cmdlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
   "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGJ1cmdlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
-  "https://images.unsplash.com/photo-1606755962773-d324e7452492?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGJ1cmdlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60"
+  "https://images.unsplash.com/photo-1606755962773-d324e7452492?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGJ1cmdlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
 ];
 
 const sliderImages = [
   "/images/slider/burger.jpg",
   "/images/slider/burger2.jpg",
-  "/images/slider/burger3.jpg", 
+  "/images/slider/burger3.jpg",
   "/images/slider/burger4.jpg",
 ];
 
@@ -52,31 +51,30 @@ function ProductList({ refreshTrigger }) {
 
   const navigate = useNavigate();
 
-  // ✅ FIXED: Image handling functions
   const getImageUrl = (imagePath) => {
     if (!imagePath) {
-      return 'https://via.placeholder.com/300x200/FF6B6B/FFFFFF?text=No+Image';
+      return "https://via.placeholder.com/300x200/FF6B6B/FFFFFF?text=No+Image";
     }
-    
-    if (imagePath.startsWith('http')) {
+
+    if (imagePath.startsWith("http")) {
       return imagePath;
     }
-    
-    if (imagePath.startsWith('/uploads')) {
+
+    if (imagePath.startsWith("/uploads")) {
       return `http://localhost:4000${imagePath}`;
     }
-    
+
     return `http://localhost:4000${imagePath}`;
   };
 
   const handleImageError = (e, fallbackIndex = 0) => {
-    console.log('🖼️ Image failed to load, using fallback');
+    console.log("Image failed to load, using fallback");
     e.target.src = fallbackImages[fallbackIndex % fallbackImages.length];
     e.target.onerror = null;
   };
 
   const handleSliderImageError = (e, index) => {
-    console.log('🎠 Slider image failed to load, using fallback');
+    console.log("Slider image failed to load, using fallback");
     e.target.src = fallbackImages[index] || fallbackImages[0];
   };
 
@@ -90,11 +88,13 @@ function ProductList({ refreshTrigger }) {
       )}`;
       const res = await axios.get(url);
 
-      console.log("✅ Products fetched successfully:", res.data.products?.length || 0);
+      console.log(
+        "Products fetched successfully:",
+        res.data.products?.length || 0
+      );
 
-      // ✅ FIXED: Debug image paths
       if (res.data.products && res.data.products.length > 0) {
-        res.data.products.forEach(product => {
+        res.data.products.forEach((product) => {
           console.log(`📸 ${product.name}: ${product.image}`);
         });
       }
@@ -276,7 +276,6 @@ function ProductList({ refreshTrigger }) {
         </div>
       </div>
 
-      {/* ✅ FIXED: Slider with better error handling */}
       <div className="mb-4 slider-container">
         <Slider {...settings}>
           {sliderImages.map((img, index) => (
@@ -339,7 +338,6 @@ function ProductList({ refreshTrigger }) {
         </div>
       </div>
 
-      {/* ✅ FIXED: Products Grid with proper image handling */}
       <div className="row">
         {products.length > 0 ? (
           products.map((product) => (
@@ -352,7 +350,12 @@ function ProductList({ refreshTrigger }) {
                       src={getImageUrl(product.image)}
                       className="card-img-top product-img"
                       alt={product.name}
-                      onError={(e) => handleImageError(e, Math.floor(Math.random() * fallbackImages.length))}
+                      onError={(e) =>
+                        handleImageError(
+                          e,
+                          Math.floor(Math.random() * fallbackImages.length)
+                        )
+                      }
                     />
                     {product.quantity <= 0 && (
                       <div className="sold-out-badge">SOLD OUT</div>
@@ -502,7 +505,6 @@ function ProductList({ refreshTrigger }) {
         </div>
       )}
 
-      {/* ✅ FIXED: Checkout Modal with proper image handling */}
       {showCheckout && selectedProduct && (
         <div
           className="modal fade show d-block"
