@@ -5,10 +5,18 @@ import "./ProductList.css";
 import Slider from "react-slick";
 import { useNavigate } from "react-router-dom";
 
+// ✅ FIXED: Fallback images for slider and products
+const fallbackImages = [
+  "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YnVyZ2VyfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+  "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJ1cmdlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+  "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGJ1cmdlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+  "https://images.unsplash.com/photo-1606755962773-d324e7452492?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGJ1cmdlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60"
+];
+
 const sliderImages = [
   "/images/slider/burger.jpg",
   "/images/slider/burger2.jpg",
-  "/images/slider/burger3.jpg",
+  "/images/slider/burger3.jpg", 
   "/images/slider/burger4.jpg",
 ];
 
@@ -44,20 +52,52 @@ function ProductList({ refreshTrigger }) {
 
   const navigate = useNavigate();
 
+  // ✅ FIXED: Image handling functions
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) {
+      return 'https://via.placeholder.com/300x200/FF6B6B/FFFFFF?text=No+Image';
+    }
+    
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    
+    if (imagePath.startsWith('/uploads')) {
+      return `http://localhost:4000${imagePath}`;
+    }
+    
+    return `http://localhost:4000${imagePath}`;
+  };
+
+  const handleImageError = (e, fallbackIndex = 0) => {
+    console.log('🖼️ Image failed to load, using fallback');
+    e.target.src = fallbackImages[fallbackIndex % fallbackImages.length];
+    e.target.onerror = null;
+  };
+
+  const handleSliderImageError = (e, index) => {
+    console.log('🎠 Slider image failed to load, using fallback');
+    e.target.src = fallbackImages[index] || fallbackImages[0];
+  };
+
   const fetchProducts = async (page = 1, search = "") => {
     try {
       setLoading(true);
-      console.log(" Fetching products...", { page, search });
+      console.log("🔄 Fetching products...", { page, search });
 
       const url = `http://localhost:4000/api/products?page=${page}&limit=6&search=${encodeURIComponent(
         search
       )}`;
       const res = await axios.get(url);
 
-      console.log(
-        "Products fetched successfully:",
-        res.data.products?.length || 0
-      );
+      console.log("✅ Products fetched successfully:", res.data.products?.length || 0);
+
+      // ✅ FIXED: Debug image paths
+      if (res.data.products && res.data.products.length > 0) {
+        res.data.products.forEach(product => {
+          console.log(`📸 ${product.name}: ${product.image}`);
+        });
+      }
 
       setProducts(res.data.products || []);
       setTotalPages(res.data.pagination?.totalPages || 1);
@@ -65,7 +105,7 @@ function ProductList({ refreshTrigger }) {
       setCurrentPage(page);
       setSearchTerm(search);
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error("❌ Fetch error:", err);
       setProducts([]);
       setTotalPages(1);
       setTotalProducts(0);
@@ -75,13 +115,11 @@ function ProductList({ refreshTrigger }) {
     }
   };
 
-  // useEffect 
   useEffect(() => {
-    console.log("Refresh trigger changed:", refreshTrigger);
+    console.log("🔄 Refresh trigger changed:", refreshTrigger);
     fetchProducts(1, "");
   }, [refreshTrigger]);
 
-  // Handle search
   const handleSearch = (e) => {
     e.preventDefault();
     fetchProducts(1, searchInput.trim());
@@ -92,7 +130,6 @@ function ProductList({ refreshTrigger }) {
     fetchProducts(1, "");
   };
 
-  // Handle delete product
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?"))
       return;
@@ -101,12 +138,11 @@ function ProductList({ refreshTrigger }) {
       alert("Product deleted successfully!");
       fetchProducts(currentPage, searchTerm);
     } catch (err) {
-      console.error("Delete error:", err);
+      console.error("❌ Delete error:", err);
       alert("Error deleting product");
     }
   };
 
-  // Edit product functions
   const openEditor = (id) => {
     setEditError(null);
     setEditingId(id);
@@ -123,7 +159,6 @@ function ProductList({ refreshTrigger }) {
     alert("Product updated successfully!");
   };
 
-  // Order functions
   const handleOrderNow = (product) => {
     if (product.quantity <= 0) {
       alert("Sorry, this product is out of stock!");
@@ -156,7 +191,6 @@ function ProductList({ refreshTrigger }) {
   const handleSubmitOrder = (e) => {
     e.preventDefault();
 
-    // Validation
     if (!orderDetails.customerName.trim()) {
       alert("Please enter your name");
       return;
@@ -180,7 +214,6 @@ function ProductList({ refreshTrigger }) {
 
     const totalPrice = selectedProduct.price * orderDetails.quantity;
 
-    // Create order summary
     const orderSummary = `
       🎉 Order Placed Successfully!
       
@@ -203,14 +236,12 @@ function ProductList({ refreshTrigger }) {
     handleCloseCheckout();
   };
 
-  // Pagination
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       fetchProducts(newPage, searchTerm);
     }
   };
 
-  // Loading state
   if (loading) {
     return (
       <div className="container my-4">
@@ -239,25 +270,22 @@ function ProductList({ refreshTrigger }) {
             className="btn btn-success btn-lg"
             onClick={() => navigate("/add")}
           >
-            <i className="fas fa-plus me-2 .modal-header.bg-warning"></i>
+            <i className="fas fa-plus me-2"></i>
             Add New Product
           </button>
         </div>
       </div>
 
-      {/* Image Slider */}
+      {/* ✅ FIXED: Slider with better error handling */}
       <div className="mb-4 slider-container">
         <Slider {...settings}>
-          {sliderImages.map((img, i) => (
-            <div key={i}>
+          {sliderImages.map((img, index) => (
+            <div key={index}>
               <img
                 src={img}
-                alt={`Delicious Burger ${i + 1}`}
+                alt={`Delicious Burger ${index + 1}`}
                 className="slider-img"
-                onError={(e) => {
-                  e.target.src =
-                    "https://via.placeholder.com/800x400/FF6B6B/FFFFFF?text=Delicious+Burger";
-                }}
+                onError={(e) => handleSliderImageError(e, index)}
               />
             </div>
           ))}
@@ -311,7 +339,7 @@ function ProductList({ refreshTrigger }) {
         </div>
       </div>
 
-      {/* Products Grid */}
+      {/* ✅ FIXED: Products Grid with proper image handling */}
       <div className="row">
         {products.length > 0 ? (
           products.map((product) => (
@@ -321,13 +349,10 @@ function ProductList({ refreshTrigger }) {
                 {product.image && (
                   <div className="product-image-container">
                     <img
-                      src={`http://localhost:4000${product.image}`}
+                      src={getImageUrl(product.image)}
                       className="card-img-top product-img"
                       alt={product.name}
-                      onError={(e) => {
-                        e.target.src =
-                          "https://via.placeholder.com/300x200/FF6B6B/FFFFFF?text=Burger+Image";
-                      }}
+                      onError={(e) => handleImageError(e, Math.floor(Math.random() * fallbackImages.length))}
                     />
                     {product.quantity <= 0 && (
                       <div className="sold-out-badge">SOLD OUT</div>
@@ -401,7 +426,6 @@ function ProductList({ refreshTrigger }) {
             </div>
           ))
         ) : (
-          /* No Products Found */
           <div className="col-12 text-center py-5">
             <div className="empty-state">
               <i className="fas fa-hamburger fa-4x text-muted mb-3"></i>
@@ -478,7 +502,7 @@ function ProductList({ refreshTrigger }) {
         </div>
       )}
 
-      {/* Checkout Modal */}
+      {/* ✅ FIXED: Checkout Modal with proper image handling */}
       {showCheckout && selectedProduct && (
         <div
           className="modal fade show d-block"
@@ -512,7 +536,7 @@ function ProductList({ refreshTrigger }) {
                         <div className="d-flex align-items-center mb-3">
                           {selectedProduct.image && (
                             <img
-                              src={`http://localhost:4000${selectedProduct.image}`}
+                              src={getImageUrl(selectedProduct.image)}
                               alt={selectedProduct.name}
                               className="me-3 rounded"
                               style={{
@@ -520,6 +544,7 @@ function ProductList({ refreshTrigger }) {
                                 height: "80px",
                                 objectFit: "cover",
                               }}
+                              onError={(e) => handleImageError(e)}
                             />
                           )}
                           <div>

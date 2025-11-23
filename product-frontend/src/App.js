@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import AddProduct from "./components/AddProduct";
 import ProductList from "./components/ProductList";
+import Blog from "./components/Blog";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
@@ -21,11 +22,11 @@ function App() {
             <Link className="btn btn-outline-light mx-2" to="/">
               📦 All Products
             </Link>
-            {/* Remove Contact Us link temporarily */}
-            {/* <Link className="btn btn-outline-light" to="/contact">Contact Us</Link> */}
+            <Link className="btn btn-outline-light mx-2" to="/blog">
+              📝 Blog
+            </Link>
           </div>
         </div>
-
       </nav>
 
       <div className="container">
@@ -38,8 +39,7 @@ function App() {
             path="/add" 
             element={<AddProduct onProductAdded={handleProductAdded} />} 
           />
-          {/* Remove Contact Us route temporarily */}
-          {/* <Route path="/contact" element={<ContactUs />} /> */}
+          <Route path="/blog" element={<Blog />} />
         </Routes>
       </div>
     </Router>
